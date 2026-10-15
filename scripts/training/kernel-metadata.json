@@ -1,0 +1,16 @@
+{
+  "id": "pranavlamkhade69/factora-roberta-text-model-training",
+  "title": "factora-roberta-text-model-training",
+  "code_file": "train_text_roberta.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": "true",
+  "enable_gpu": "true",
+  "enable_tpu": "false",
+  "enable_internet": "true",
+  "dataset_sources": [
+    "pranavlamkhade69/factora-fake-news-text-dataset"
+  ],
+  "competition_sources": [],
+  "kernel_sources": []
+}
