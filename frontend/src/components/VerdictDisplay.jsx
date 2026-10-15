@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckCircle2, AlertTriangle, ExternalLink, ThumbsUp, ThumbsDown, Info, ShieldCheck, Cpu } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, ExternalLink, ThumbsUp, ThumbsDown, Info, ShieldCheck, Cpu, Layers, Eye } from 'lucide-react';
 import { submitFeedback } from '../api';
 
 export default function VerdictDisplay({ result, onFeedbackSubmitted }) {
@@ -83,7 +83,7 @@ export default function VerdictDisplay({ result, onFeedbackSubmitted }) {
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '1.25rem', paddingTop: '1.25rem', borderTop: '1px solid var(--color-beige-light)' }}>
           {detailed.probabilities && (
             <div style={{ background: 'var(--color-ivory)', padding: '0.4rem 0.8rem', borderRadius: '8px', fontSize: '0.82rem' }}>
-              <strong>Probabilities:</strong> REAL: {detailed.probabilities.REAL}% | FAKE: {detailed.probabilities.FAKE}%
+              <strong>Probabilities:</strong> REAL: {detailed.probabilities.REAL ?? detailed.probabilities.real}% | FAKE: {detailed.probabilities.FAKE ?? detailed.probabilities.fake}%
             </div>
           )}
 
@@ -112,6 +112,72 @@ export default function VerdictDisplay({ result, onFeedbackSubmitted }) {
           )}
         </div>
       </div>
+
+      {/* Forensic ELA Visualizer (If Image Modality and ELA Preview Available) */}
+      {result.modality === 'IMAGE' && detailed.ela_preview_base64 && (
+        <div className="editorial-card" style={{ marginBottom: '1.5rem', background: '#FFF' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+            <h3 style={{ fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}>
+              <Layers size={19} color="var(--color-terracotta)" />
+              <span>Error Level Analysis (ELA) Compression Heatmap</span>
+            </h3>
+            <span style={{ fontSize: '0.8rem', padding: '0.25rem 0.65rem', borderRadius: '9999px', background: detailed.error_level_analysis?.compression_anomaly_detected ? 'var(--color-fake-soft)' : 'var(--color-real-soft)', color: detailed.error_level_analysis?.compression_anomaly_detected ? 'var(--color-fake-dark)' : 'var(--color-real-dark)', fontWeight: 700 }}>
+              {detailed.error_level_analysis?.compression_anomaly_detected ? 'Anomaly Detected' : 'Uniform Compression'}
+            </span>
+          </div>
+
+          <p style={{ color: 'var(--color-charcoal)', fontSize: '0.92rem', lineHeight: '1.6', marginBottom: '1.25rem' }}>
+            Error Level Analysis highlights compression decay differentials across the image grid. Digital alterations, Photoshop clone stamps, splicing, and AI-diffusion boundary artifacts manifest as bright, high-energy pixel clusters against the dark background.
+          </p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', alignItems: 'start' }}>
+            {/* Visual Heatmap Canvas Container */}
+            <div style={{ borderRadius: '14px', overflow: 'hidden', border: '1px solid var(--color-beige-light)', background: '#111', padding: '0.5rem', textAlign: 'center' }}>
+              <div style={{ fontSize: '0.78rem', color: '#AAA', padding: '0.35rem 0 0.5rem 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
+                <Eye size={13} color="var(--color-terracotta)" />
+                <span>Forensic ELA Visual Spectrum</span>
+              </div>
+              <img
+                src={detailed.ela_preview_base64}
+                alt="Error Level Analysis Heatmap"
+                style={{ width: '100%', maxHeight: '340px', objectFit: 'contain', borderRadius: '10px', display: 'block', background: '#000' }}
+              />
+            </div>
+
+            {/* Metrics & Interpretation Panel */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+              <div style={{ background: 'var(--color-ivory)', padding: '0.9rem', borderRadius: '12px', border: '1px solid var(--color-beige-light)' }}>
+                <div style={{ fontSize: '0.8rem', color: 'var(--color-gray)', fontWeight: 600 }}>Standard Deviation Error</div>
+                <div style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--color-charcoal-dark)', marginTop: '0.15rem' }}>
+                  {detailed.error_level_analysis?.stddev_error ?? 0}
+                </div>
+                <div style={{ fontSize: '0.78rem', color: 'var(--color-gray)', marginTop: '0.2rem' }}>
+                  Threshold &gt; 8.5 indicates localized boundary manipulation
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem' }}>
+                <div style={{ background: 'var(--color-ivory)', padding: '0.8rem', borderRadius: '12px', border: '1px solid var(--color-beige-light)' }}>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-gray)', fontWeight: 600 }}>Mean Pixel Error</div>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--color-charcoal-dark)', marginTop: '0.15rem' }}>
+                    {detailed.error_level_analysis?.mean_error ?? 0}
+                  </div>
+                </div>
+                <div style={{ background: 'var(--color-ivory)', padding: '0.8rem', borderRadius: '12px', border: '1px solid var(--color-beige-light)' }}>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-gray)', fontWeight: 600 }}>RMS Difference</div>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--color-charcoal-dark)', marginTop: '0.15rem' }}>
+                    {detailed.error_level_analysis?.rms_error ?? 0}
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ background: '#FAF7F0', padding: '0.85rem', borderRadius: '12px', fontSize: '0.82rem', color: 'var(--color-charcoal)', lineHeight: '1.5' }}>
+                <strong>Forensic Interpretation:</strong> {detailed.error_level_analysis?.interpretation}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Google Fact-Check Citations Section (If Text Modality) */}
       {result.google_crosscheck && (
