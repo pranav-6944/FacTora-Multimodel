@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+
+# Environment Variables
+.env
+.env.local
+
+# Databases & Uploads
+data/*.db
+data/*.sqlite
+data/*.sqlite3
+data/uploads/*
+!data/uploads/.gitkeep
+*.db
+
+# Large Model Weights (Keep local or fetch from HuggingFace)
+models_registry/*
+!models_registry/.gitkeep
+*.bin
+*.pt
+*.safetensors
+*.onnx
+
+# Datasets raw & processed dumps (hosted on Kaggle: pranavlamkhade69/factora-fake-news-text-dataset)
+datasets/*.zip
+datasets/processed/*.csv
+datasets/raw/*
+!datasets/.gitkeep
+!datasets/processed/.gitkeep
+!datasets/raw/.gitkeep
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
