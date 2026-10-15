@@ -186,6 +186,10 @@
         - `config.json`, `tokenizer_config.json`, `training_args.bin`, `training_history.csv`
     - Production Inference:
       - Live verification loads strictly the root `model.safetensors` via `local_factora_roberta_model` and auto-ejects from RAM post-inference. Verified operating cleanly post-cleanup.
+  - GitHub Multi-Commit Deployment (October 2026):
+    - Target Repository: `https://github.com/pranav-6944/FacTora-Multimodel`
+    - Pushed 15 atomic commits covering all architecture layers (Genesis, Database, Security, ModelManager, RoBERTa Text Engine, Forensics, Live News, Source Credibility, Extension MV3, Admin Console, React Frontend, Brand Assets, E2E Tests, Kaggle Scripts, Documentation).
+    - GitHub Push Protection compliant: all sensitive credentials protected via `.env` and `.gitignore`.
   - Live News Full Article Extraction & Truncation Elimination (October 2026):
     - Root Cause: Free-tier NewsAPI truncates the `content` field at 200 characters and appends `... [+2479 chars]` to enforce paid tier upgrades.
     - Solution:
