@@ -197,4 +197,16 @@
       - `app/api/v1/endpoints/news.py`: Added `GET /api/v1/news/extract-full-text` endpoint.
       - `frontend/src/api.js`: Added `extractArticleContent(url, fallbackText)` with a 4.5s AbortController.
       - `frontend/src/components/LiveNews.jsx`: Updated "Verify with FacTora" button to extract full wire body with interactive spinner (`Extracting Full Wire...`), pasting the complete narrative body into the Verification Hub without `[+2479 chars]`.
+  - Phase 2: Custom Vision Deepfake Model & Interactive ELA Visualizer (October 2026):
+    - Kaggle Training Pipeline:
+      - `scripts/training/train_image_detector.ipynb`: End-to-end notebook for training ResNet-50 / ViT / ConvNeXt on CIFAKE (120k samples: 60k Real / 60k AI Synthetic) with FP16 and evaluate metrics.
+      - `scripts/training/kernel-metadata-image.json`: Configured for `pranavlamkhade69/factora-image-detector-training`.
+      - Output target: lightweight `model.safetensors` (~21-80 MB) and `config.json`.
+    - Backend RAM Lifecycle & Vision Inference:
+      - `app/core/model_manager.py:182-270`: Implemented `load_vision_model()` with exclusive `asyncio.Lock`, on-demand weight loading, `psutil` RAM metrics before/peak/eject, and immediate `gc.collect()` memory freeing.
+      - `app/services/image_detector.py:27-140`: Computes high-contrast Error Level Analysis (ELA) and generates base64 PNG data URL (`ela_preview_base64`). Connects to `load_vision_model()` for pure tensor softmax logits, with resilient fallback to spatial frequency + ELA metrics.
+    - Frontend Interactive ELA Visualizer:
+      - `frontend/src/components/VerdictDisplay.jsx:114-177`: Interactive ELA visualizer canvas displaying the forensic compression heatmap alongside Standard Deviation, Mean Error, and RMS Difference tiles with forensic interpretation badges.
+    - Test Suite:
+      - `tests/test_phase2_image.py`: 100% pass across all 4 tests (ELA heatmap generation, detector service, RAM lifecycle, and HTTP API endpoint).
 

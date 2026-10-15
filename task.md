@@ -155,3 +155,25 @@
   - All 4 ported test suites in `tests/test_old_features_port.py` passing flawlessly
 - [x] **Status:** COMPLETED & VERIFIED
 
+---
+
+### Phase 6 (Custom Vision Deepfake & ELA Forensic System)
+- [x] **Kaggle Deep Learning Notebook** (`scripts/training/train_image_detector.ipynb` & `kernel-metadata-image.json`):
+  - Binary classification on CIFAKE benchmark (120k images, 60k Real / 60k AI-generated).
+  - Pretrained transfer learning with Hugging Face Trainer and evaluate metrics (Accuracy, F1, Precision, Recall).
+  - Exports lightweight `model.safetensors` (~21 MB), `config.json`, and `preprocessor_config.json`.
+- [x] **Backend Vision Model Lifecycle** (`app/core/model_manager.py`):
+  - Implemented `load_vision_model()` with exclusive `asyncio.Lock` and on-demand weight loading.
+  - Real `psutil` RSS process RAM telemetry tracking (before load, peak, after purge).
+  - Guaranteed eager RAM auto-ejection post-inference.
+- [x] **Enhanced Image Detector Service** (`app/services/image_detector.py`):
+  - Generates high-contrast visual Error Level Analysis (ELA) heatmap encoded as base64 PNG data URL (`ela_preview_base64`).
+  - Executes neural forward pass via `ModelManager` when weights exist, with resilient ELA fallback.
+  - Multi-factor explainable reasoning output.
+- [x] **Interactive ELA Visualizer UI** (`frontend/src/components/VerdictDisplay.jsx`):
+  - High-energy pixel variance canvas displaying the forensic compression heatmap alongside image metrics.
+  - Standard Deviation, Mean Error, and RMS Difference tiles with forensic interpretation badges.
+- [x] **Automated Test Suite** (`tests/test_phase2_image.py`):
+  - 100% pass across all 4 test suites (ELA heatmap generation, detector service, RAM lifecycle, and HTTP API endpoint).
+- [x] **Status:** COMPLETED & VERIFIED
+
