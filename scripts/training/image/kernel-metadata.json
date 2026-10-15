@@ -1,0 +1,16 @@
+{
+  "id": "pranavlamkhade69/factora-image-detector-training",
+  "title": "factora-image-detector-training",
+  "code_file": "train_image_detector.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "dataset_sources": [
+    "birdy654/cifake-real-and-ai-generated-synthetic-images"
+  ],
+  "competition_sources": [],
+  "kernel_sources": []
+}

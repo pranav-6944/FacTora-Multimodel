@@ -198,10 +198,16 @@
       - `frontend/src/api.js`: Added `extractArticleContent(url, fallbackText)` with a 4.5s AbortController.
       - `frontend/src/components/LiveNews.jsx`: Updated "Verify with FacTora" button to extract full wire body with interactive spinner (`Extracting Full Wire...`), pasting the complete narrative body into the Verification Hub without `[+2479 chars]`.
   - Phase 2: Custom Vision Deepfake Model & Interactive ELA Visualizer (October 2026):
-    - Kaggle Training Pipeline:
-      - `scripts/training/train_image_detector.ipynb`: End-to-end notebook for training ResNet-50 / ViT / ConvNeXt on CIFAKE (120k samples: 60k Real / 60k AI Synthetic) with FP16 and evaluate metrics.
-      - `scripts/training/kernel-metadata-image.json`: Configured for `pranavlamkhade69/factora-image-detector-training`.
-      - Output target: lightweight `model.safetensors` (~21-80 MB) and `config.json`.
+    - Kaggle Automated Training Pipeline (October 2026):
+      - `scripts/training/image/kernel-metadata.json`: Dedicated metadata pushing to `pranavlamkhade69/factora-image-detector-training` with CIFAKE dataset (`birdy654/cifake-real-and-ai-generated-synthetic-images`) and GPU enabled.
+      - `scripts/training/image/train_image_detector.ipynb`:
+        - Step 3: Batch size 128, 3 epochs, image size (128, 128) optimized for high throughput on Tesla T4 16GB GPU.
+        - Step 4: Dynamic directory walker across `/kaggle/input` to reliably locate `train` and `test` splits regardless of Kaggle mount naming.
+        - Step 5: `CIFAKEDataset` with resilient case-insensitive path resolution for `REAL` and `FAKE` directories.
+        - Step 8: `TrainingArguments` compatibility patch for `eval_strategy` on `transformers` 5.x.
+        - Step 11: Saves final `model.safetensors` and preprocessor files into `/kaggle/working/factora_image_model/factora_image_model/`.
+      - Version 2 launched via `kaggle kernels push -p scripts/training/image` and verified running as `KernelWorkerStatus.RUNNING` on Tesla T4.
+      - Target download destination upon completion: `models_registry/factora_image_model/factora_image_model/`.
     - Backend RAM Lifecycle & Vision Inference:
       - `app/core/model_manager.py:182-270`: Implemented `load_vision_model()` with exclusive `asyncio.Lock`, on-demand weight loading, `psutil` RAM metrics before/peak/eject, and immediate `gc.collect()` memory freeing.
       - `app/services/image_detector.py:27-140`: Computes high-contrast Error Level Analysis (ELA) and generates base64 PNG data URL (`ela_preview_base64`). Connects to `load_vision_model()` for pure tensor softmax logits, with resilient fallback to spatial frequency + ELA metrics.
@@ -209,4 +215,5 @@
       - `frontend/src/components/VerdictDisplay.jsx:114-177`: Interactive ELA visualizer canvas displaying the forensic compression heatmap alongside Standard Deviation, Mean Error, and RMS Difference tiles with forensic interpretation badges.
     - Test Suite:
       - `tests/test_phase2_image.py`: 100% pass across all 4 tests (ELA heatmap generation, detector service, RAM lifecycle, and HTTP API endpoint).
+
 
